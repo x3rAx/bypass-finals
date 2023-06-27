@@ -134,9 +134,16 @@ class BypassFinals
 
 		$code = '';
 		foreach ($tokens as $token) {
-			$code .= is_array($token)
-				? ($token[0] === T_FINAL ? '' : $token[1])
-				: $token;
+			if (!is_array($token)) {
+				$code .= $token;
+				continue;
+			}
+
+			$code .= match ($token[0]) {
+				T_FINAL => '',
+				T_READONLY => '',
+				default => $token[1],
+			};
 		}
 
 		return $code;
