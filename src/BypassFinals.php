@@ -27,6 +27,9 @@ class BypassFinals
 	/** @var ?string */
 	private static $cacheDir;
 
+	/** @var bool */
+	private static $bypassReadonly = false;
+
 
 	public static function enable(): void
 	{
@@ -57,6 +60,11 @@ class BypassFinals
 	public static function setCacheDirectory(?string $dir): void
 	{
 		self::$cacheDir = $dir;
+	}
+
+	public static function setBypassReadonly(bool $value = true)
+	{
+		self::$bypassReadonly = $value;
 	}
 
 
@@ -141,7 +149,7 @@ class BypassFinals
 
 			$code .= match ($token[0]) {
 				T_FINAL => '',
-				T_READONLY => '',
+				T_READONLY => (self::$bypassReadonly ? '' : $token[1]),
 				default => $token[1],
 			};
 		}
